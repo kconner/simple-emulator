@@ -6,6 +6,7 @@ private enum Command: String {
     case run = "run"
     case runAndShowRegisters = "run-and-show-registers"
     case disassemble = "disassemble"
+    case benchmark = "benchmark"
 }
 
 func main(arguments: [String]) throws {
@@ -23,6 +24,11 @@ func main(arguments: [String]) throws {
         print(machine.registerState)
     case .disassemble:
         print(try program.disassembled())
+    case .benchmark:
+        for _ in 0..<100000 {
+            var machine = Machine(program: program)
+            try machine.execute()
+        }
     }
 }
 
@@ -36,7 +42,8 @@ private func interpret(arguments: [String]) throws -> (command: Command, program
                 + "Available commands:\n\n"
                 + "   run                       Execute, then show the count of instructions run\n"
                 + "   run-and-show-registers    Also show the final register state\n"
-                + "   disassemble               Disassemble the program"
+                + "   disassemble               Disassemble the program\n"
+                + "   benchmark                 Run 10,000 times, for use with the time command"
         )
     }
 
