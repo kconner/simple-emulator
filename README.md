@@ -53,6 +53,4 @@ Output:
 
 ## Solution
 
-This solution can return the number of instructions run, the final state of the registers, or a program disassembly. I used a struct of three fields for each word of memory and preallocated it.
-
-I'd like to try storing Ints, not Words, and using a simple array lookup for instruction decoding.
+This solution can return the number of instructions run, the final state of the registers, or a program disassembly. Each word of memory is an Int. Memory is preallocated, as is a lookup table of all decodable instructions.

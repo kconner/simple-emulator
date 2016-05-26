@@ -28,14 +28,15 @@ enum Instruction {
     case multiply(to: Destination, with: Source)
     case jump(toAddress: Int, ifNonzero: Int)
 
-    private static var memo: [Instruction?] = Array(repeating: nil, count: 1000)
+    static let forWord: [Instruction?] = (0..<1000).map {
+        do {
+            return try Instruction(word: $0) 
+        } catch {
+            return nil
+        }
+    }
 
     init(word: Int) throws {
-        if let instruction = Instruction.memo[word] {
-            self = instruction
-            return
-        }
-
         switch word.se_digits {
         case (1, 0, 0):
             self = .halt
@@ -60,8 +61,6 @@ enum Instruction {
         default:
             throw NSError(se_message: "Invalid instruction: \(word)")
         }
-
-        Instruction.memo[word] = self
     }
 
 }

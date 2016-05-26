@@ -1,3 +1,5 @@
+import Foundation
+
 struct Machine {
 
     static let registerCount = 10
@@ -75,7 +77,11 @@ struct Machine {
     }
 
     private func currentInstruction() throws -> Instruction {
-        return try Instruction(word: words[instructionAddress])
+        let word = words[instructionAddress]
+        guard let instruction = Instruction.forWord[word] else {
+            throw NSError(se_message: "Invalid instruction: \(word)")
+        }
+        return instruction
     }
 
 }
