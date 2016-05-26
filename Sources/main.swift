@@ -4,33 +4,39 @@ import Foundation
 
 private enum Command: String {
     case run = "run"
-    case decode = "decode"
+    case runAndShowRegisters = "run-and-show-registers"
+    case disassemble = "disassemble"
 }
 
 func main(arguments: [String]) throws {
-    let (command, programPath) = try parse(arguments: arguments)
+    let (command, programPath) = try interpret(arguments: arguments)
     let program = try Program(contentsOfFile: programPath)
 
     switch command {
     case .run:
         var machine = Machine(program: program)
-        let instructionsExecuted = try machine.execute()
-        print(instructionsExecuted)
-        print(machine.registers)
-    case .decode:
-        print(try program.words.map { try Instruction(word: $0) })
+        print(try machine.execute())
+    case .runAndShowRegisters:
+        var machine = Machine(program: program)
+        print(try machine.execute())
+        print()
+        print(machine.registerState)
+    case .disassemble:
+        print(try program.disassembled())
     }
 }
 
-private func parse(arguments: [String]) throws -> (command: Command, programPath: String) {
+private func interpret(arguments: [String]) throws -> (command: Command, programPath: String) {
     guard arguments.count == 3,
         let command = Command(rawValue: arguments[1])
         else
     {
         throw NSError(
-            se_message: "Usage: simple-emulator <command> <program-file>\n"
-                + "    simple-emulator run <program-file>       Execute the program\n"
-                + "    simple-emulator decode <program-file>    Disassemble the program"
+            se_message: "Usage: simple-emulator <command> <program-file>\n\n"
+                + "Available commands:\n\n"
+                + "   run                       Execute, then show the count of instructions run\n"
+                + "   run-and-show-registers    Also show the final register state\n"
+                + "   disassemble               Disassemble the program"
         )
     }
 

@@ -51,8 +51,57 @@ enum Instruction {
         case let (0, addressIndex, flagIndex):
             self = .jump(toAddress: addressIndex, ifNonzero: flagIndex)
         default:
-            throw NSError(se_message: "Invalid instruction word: \(word)")
+            throw NSError(se_message: "Invalid instruction: \(word)")
         }
     }
 
+}
+
+extension Instruction: CustomStringConvertible {
+
+    var description: String {
+        switch self {
+        case .halt:
+            return "return"
+        case let .move(destination, source):
+            return "\(destination) = \(source)"
+        case let .add(destination, source):
+            return "\(destination) = \(destination) + \(source)"
+        case let .multiply(destination, source):
+            return "\(destination) = \(destination) * \(source)"
+        case let .jump(addressIndex, flagIndex):
+            return "if r\(flagIndex) != 0 {\n"
+                + "    goto *r\(addressIndex)\n"
+                + "}"
+        }
+    }
+
+}
+
+extension Instruction.Destination: CustomStringConvertible {
+
+    var description: String {
+        switch self {
+        case let .register(index):
+            return "r\(index)"
+        case let .address(registerIndex):
+            return "*r\(registerIndex)"
+        }
+    }
+    
+}
+
+extension Instruction.Source: CustomStringConvertible {
+
+    var description: String {
+        switch self {
+        case let .value(value):
+            return value.description
+        case let .register(index):
+            return "r\(index)"
+        case let .address(registerIndex):
+            return "*r\(registerIndex)"
+        }
+    }
+    
 }

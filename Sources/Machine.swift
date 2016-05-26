@@ -3,9 +3,9 @@ struct Machine {
     static let registerCount = 10
     static let wordCount = 1000
 
-    var registers: [Word]
-    var words: [Word]
-    var instructionAddress: Int = 0
+    private var registers: [Word]
+    private var words: [Word]
+    private var instructionAddress: Int = 0
 
     init(program: Program) {
         registers = Array(repeating: Word(), count: Machine.registerCount)
@@ -17,11 +17,15 @@ struct Machine {
         self.words = words
     }
 
+    var registerState: String {
+        return registers.enumerated().map { "r\($0): \($1)" }.joined(separator: "\n")
+    }
+
     mutating func execute() throws -> Int {
-        var count = 0
-        repeat {
+        var count = 1
+        while perform(instruction: try currentInstruction()) {
             count += 1
-        } while perform(instruction: try currentInstruction())
+        } 
         return count
     }
 
