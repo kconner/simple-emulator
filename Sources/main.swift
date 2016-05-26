@@ -2,11 +2,10 @@
 
 import Foundation
 
-private let errorDomain = "simple-emulator"
-
 func main(arguments: [String]) throws {
     let path = try inputFilePath(arguments: arguments)
     let program = try Program(contentsOfFile: path)
+    let machine = Machine(program: program)
     print(program.words)
 }
 
