@@ -13,9 +13,14 @@ struct Word {
     }
 
     init(value: Int) {
-        function = value % 1000
-        operand1 = value % 100
-        operand2 = value % 10
+        var remainder = value
+        operand2 = remainder % 10
+
+        remainder = (remainder - operand2) / 10
+        operand1 = remainder % 10
+        
+        remainder = (remainder - operand1) / 10
+        function = remainder
     }
 
     init(programLine: String) throws {

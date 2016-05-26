@@ -5,7 +5,7 @@ struct Machine {
 
     var registers: [Word]
     var words: [Word]
-    var instructionPointer: Int = 0
+    var instructionAddress: Int = 0
 
     init(program: Program) {
         registers = Array(repeating: Word(), count: Machine.registerCount)
@@ -17,8 +17,12 @@ struct Machine {
         self.words = words
     }
 
-    mutating func execute() throws {
-        repeat {} while perform(instruction: try currentInstruction())
+    mutating func execute() throws -> Int {
+        var count = 0
+        repeat {
+            count += 1
+        } while perform(instruction: try currentInstruction())
+        return count
     }
 
     private mutating func perform(instruction: Instruction) -> Bool {
@@ -27,22 +31,22 @@ struct Machine {
             return false
         case let .move(destination, source):
             write(to: destination, value: read(from: source))
-            instructionPointer += 1
+            instructionAddress += 1
         case let .add(destination, source):
             write(to: destination, value: read(from: destination.asSource) + read(from: source))
-            instructionPointer += 1
+            instructionAddress += 1
         case let .multiply(destination, source):
             write(to: destination, value: read(from: destination.asSource) * read(from: source))
-            instructionPointer += 1
-        case let .jump(addressRegisterIndex, flagRegisterIndex):
-            if read(from: .register(flagRegisterIndex)) != Word() {
-                instructionPointer = read(from: .register(addressRegisterIndex)).value
+            instructionAddress += 1
+        case let .jump(addressIndex, flagIndex):
+            if read(from: .register(index: flagIndex)) != Word() {
+                instructionAddress = read(from: .register(index: addressIndex)).value
             } else {
-                instructionPointer += 1
+                instructionAddress += 1
             }
         }
 
-        instructionPointer %= 1000
+        instructionAddress %= 1000
         return true
     }
 
@@ -67,7 +71,7 @@ struct Machine {
     }
 
     private func currentInstruction() throws -> Instruction {
-        return try Instruction(word: words[instructionPointer])
+        return try Instruction(word: words[instructionAddress])
     }
 
 }

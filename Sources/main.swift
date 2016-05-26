@@ -2,26 +2,41 @@
 
 import Foundation
 
-func main(arguments: [String]) throws {
-    let path = try inputFilePath(arguments: arguments)
-    let program = try Program(contentsOfFile: path)
-    var machine = Machine(program: program)
-    print(machine.words[0..<100])
-    print(machine.registers)
-    try machine.execute()
-    print(machine.words[0..<100])
-    print(machine.registers)
+private enum Command: String {
+    case run = "run"
+    case decode = "decode"
 }
 
-private func inputFilePath(arguments: [String]) throws -> String {
-    guard arguments.count == 2,
-        let path = arguments.last
+func main(arguments: [String]) throws {
+    let (command, programPath) = try parse(arguments: arguments)
+    let program = try Program(contentsOfFile: programPath)
+
+    switch command {
+    case .run:
+        var machine = Machine(program: program)
+        let instructionsExecuted = try machine.execute()
+        print(instructionsExecuted)
+        print(machine.registers)
+    case .decode:
+        print(try program.words.map { try Instruction(word: $0) })
+    }
+}
+
+private func parse(arguments: [String]) throws -> (command: Command, programPath: String) {
+    guard arguments.count == 3,
+        let command = Command(rawValue: arguments[1])
         else
     {
-        throw NSError(se_message: "Usage: simple-emulator <input file>")
+        throw NSError(
+            se_message: "Usage: simple-emulator <command> <program-file>\n"
+                + "    simple-emulator run <program-file>       Execute the program\n"
+                + "    simple-emulator decode <program-file>    Disassemble the program"
+        )
     }
 
-    return path
+    let programPath = arguments[2]
+
+    return (command: command, programPath: programPath)
 }
 
 do {
