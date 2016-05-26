@@ -18,7 +18,7 @@ struct Word {
 
         remainder = (remainder - operand2) / 10
         operand1 = remainder % 10
-        
+
         remainder = (remainder - operand1) / 10
         function = remainder
     }
