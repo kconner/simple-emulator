@@ -2,7 +2,7 @@ import Foundation
 
 struct Program {
 
-    let words: [Word] 
+    let words: [Int] 
 
     init(contentsOfFile path: String) throws {
         let lines = try String(contentsOfFile: path, encoding: NSUTF8StringEncoding)
@@ -13,11 +13,11 @@ struct Program {
             throw NSError(se_message: "Program is too long for memory: \(lines.count) words out of \(Machine.wordCount) available.")
         }
 
-        words = try lines.map(Word.init(programLine:))
+        words = try lines.map(Int.init(se_programLine:))
     }
 
     func disassembled() throws -> String {
-        return try words.map { "// \($0)\n\(try Instruction(word: $0))" }.joined(separator: "\n\n")
+        return try words.map { "\(try Instruction(word: $0))\t// \($0)" }.joined(separator: "\n")
     }
 
 }

@@ -43,7 +43,7 @@ private func interpret(arguments: [String]) throws -> (command: Command, program
                 + "   run                       Execute, then show the count of instructions run\n"
                 + "   run-and-show-registers    Also show the final register state\n"
                 + "   disassemble               Disassemble the program\n"
-                + "   benchmark                 Run 10,000 times, for use with the time command"
+                + "   benchmark                 Run 100,000 times, for use with the time command"
         )
     }
 

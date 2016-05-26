@@ -28,8 +28,15 @@ enum Instruction {
     case multiply(to: Destination, with: Source)
     case jump(toAddress: Int, ifNonzero: Int)
 
-    init(word: Word) throws {
-        switch (word.function, word.operand1, word.operand2) {
+    private static var memo: [Instruction?] = Array(repeating: nil, count: 1000)
+
+    init(word: Int) throws {
+        if let instruction = Instruction.memo[word] {
+            self = instruction
+            return
+        }
+
+        switch word.se_digits {
         case (1, 0, 0):
             self = .halt
         case let (2, index, value):
@@ -53,6 +60,8 @@ enum Instruction {
         default:
             throw NSError(se_message: "Invalid instruction: \(word)")
         }
+
+        Instruction.memo[word] = self
     }
 
 }
@@ -66,13 +75,11 @@ extension Instruction: CustomStringConvertible {
         case let .move(destination, source):
             return "\(destination) = \(source)"
         case let .add(destination, source):
-            return "\(destination) = \(destination) + \(source)"
+            return "\(destination) = (\(destination) + \(source)) % 1000"
         case let .multiply(destination, source):
-            return "\(destination) = \(destination) * \(source)"
+            return "\(destination) = (\(destination) * \(source)) % 1000"
         case let .jump(addressIndex, flagIndex):
-            return "if r\(flagIndex) != 0 {\n"
-                + "    goto *r\(addressIndex)\n"
-                + "}"
+            return "if r\(flagIndex) != 0 { goto *r\(addressIndex) }"
         }
     }
 
