@@ -25,7 +25,7 @@ func main(arguments: [String]) throws {
     case .disassemble:
         print(try program.disassembled())
     case .benchmark:
-        for _ in 0..<100000 {
+        for _ in 0..<1_000_000 {
             var machine = Machine(program: program)
             try machine.execute()
         }
@@ -43,7 +43,7 @@ private func interpret(arguments: [String]) throws -> (command: Command, program
                 + "   run                       Execute, then show the count of instructions run\n"
                 + "   run-and-show-registers    Also show the final register state\n"
                 + "   disassemble               Disassemble the program\n"
-                + "   benchmark                 Run 100,000 times, for use with the time command"
+                + "   benchmark                 Run 1,000,000 times, for use with the time command"
         )
     }
 
