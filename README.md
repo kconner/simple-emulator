@@ -53,4 +53,4 @@ Output:
 
 ## Solution
 
-This solution can return the number of instructions run, the final state of the registers, or a program disassembly. Each word of memory is an Int. Memory is preallocated, as is a lookup table of all decodable instructions.
+This solution can return the number of instructions run, the final state of the registers, or a disassembly of the program. It can also be run in a benchmarking mode that executes the program 1,000,000 times. Each word of memory is an Int. A lookup table contains all decoded instructions by word value.
