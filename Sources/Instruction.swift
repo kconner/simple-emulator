@@ -2,47 +2,54 @@ import Foundation
 
 enum Instruction {
 
-    typealias RegisterIndex = Int
-
     enum Destination {
-        case register(RegisterIndex)
-        case address(RegisterIndex)
+        case register(index: Int)
+        case address(registerIndex: Int)
+
+        var asSource: Source {
+            switch self {
+            case let .register(index):
+                return .register(index: index)
+            case let .address(index):
+                return .address(registerIndex: index)
+            }
+        }
     }
 
     enum Source {
         case value(Int)
-        case register(RegisterIndex)
-        case address(RegisterIndex)
+        case register(index: Int)
+        case address(registerIndex: Int)
     }
 
     case halt
     case move(to: Destination, from: Source)
     case add(to: Destination, with: Source)
     case multiply(to: Destination, with: Source)
-    case jump(toAddress: RegisterIndex, ifNonzero: RegisterIndex)
+    case jump(toAddress: Int, ifNonzero: Int)
 
     init(word: Word) throws {
         switch (word.function, word.operand1, word.operand2) {
         case (1, 0, 0):
             self = .halt
-        case (2, let destination, let value):
-            self = .move(to: .register(destination), from: .value(value))
-        case (3, let destination, let value):
-            self = .add(to: .register(destination), with: .value(value))
-        case (4, let destination, let value):
-            self = .multiply(to: .register(destination), with: .value(value))
-        case (5, let destination, let registerIndex):
-            self = .move(to: .register(destination), from: .register(registerIndex))
-        case (6, let destination, let registerIndex):
-            self = .add(to: .register(destination), with: .register(registerIndex))
-        case (7, let destination, let registerIndex):
-            self = .multiply(to: .register(destination), with: .register(registerIndex))
-        case (8, let destination, let source):
-            self = .move(to: .register(destination), from: .address(source))
-        case (9, let source, let destination):
-            self = .move(to: .address(destination), from: .register(source))
-        case (0, let addressRegister, let flagRegister):
-            self = .jump(toAddress: addressRegister, ifNonzero: flagRegister)
+        case let (2, index, value):
+            self = .move(to: .register(index: index), from: .value(value))
+        case let (3, index, value):
+            self = .add(to: .register(index: index), with: .value(value))
+        case let (4, index, value):
+            self = .multiply(to: .register(index: index), with: .value(value))
+        case let (5, destinationIndex, sourceIndex):
+            self = .move(to: .register(index: destinationIndex), from: .register(index: sourceIndex))
+        case let (6, destinationIndex, sourceIndex):
+            self = .add(to: .register(index: destinationIndex), with: .register(index: sourceIndex))
+        case let (7, destinationIndex, sourceIndex):
+            self = .multiply(to: .register(index: destinationIndex), with: .register(index: sourceIndex))
+        case let (8, destinationIndex, sourceIndex):
+            self = .move(to: .register(index: destinationIndex), from: .address(registerIndex: sourceIndex))
+        case let (9, sourceIndex, destinationIndex):
+            self = .move(to: .address(registerIndex: destinationIndex), from: .register(index: sourceIndex))
+        case let (0, addressIndex, flagIndex):
+            self = .jump(toAddress: addressIndex, ifNonzero: flagIndex)
         default:
             throw NSError(se_message: "Invalid instruction word: \(word)")
         }

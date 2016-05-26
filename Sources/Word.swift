@@ -35,6 +35,10 @@ struct Word {
             throw NSError(se_message: "Invalid instruction: \(programLine)")
         }
     }
+
+    var value: Int {
+        return function * 100 + operand1 * 10 + operand2
+    }
     
 }
 
@@ -44,4 +48,20 @@ extension Word: CustomStringConvertible {
         return "\(function)\(operand1)\(operand2)"
     }
 
+}
+
+extension Word: Equatable {}
+
+func ==(lhs: Word, rhs: Word) -> Bool {
+    return lhs.function == rhs.function
+        && lhs.operand1 == rhs.operand1
+        && lhs.operand2 == rhs.operand2
+}
+
+func +(lhs: Word, rhs: Word) -> Word {
+    return Word(value: (lhs.value + rhs.value) % 1000)
+}
+
+func *(lhs: Word, rhs: Word) -> Word {
+    return Word(value: (lhs.value * rhs.value) % 1000)
 }

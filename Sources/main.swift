@@ -5,8 +5,12 @@ import Foundation
 func main(arguments: [String]) throws {
     let path = try inputFilePath(arguments: arguments)
     let program = try Program(contentsOfFile: path)
-    let machine = Machine(program: program)
-    print(program.words)
+    var machine = Machine(program: program)
+    print(machine.words[0..<100])
+    print(machine.registers)
+    try machine.execute()
+    print(machine.words[0..<100])
+    print(machine.registers)
 }
 
 private func inputFilePath(arguments: [String]) throws -> String {
