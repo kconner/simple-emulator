@@ -7,7 +7,7 @@ private let errorDomain = "simple-emulator"
 func main(arguments: [String]) throws {
     let path = try inputFilePath(arguments: arguments)
     let program = try Program(contentsOfFile: path)
-    print(program.instructions)
+    print(program.words)
 }
 
 private func inputFilePath(arguments: [String]) throws -> String {
